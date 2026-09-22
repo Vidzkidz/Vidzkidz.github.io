@@ -1,4 +1,4 @@
-# Interactive Astraeus Serenade Web Tracker Code
+# Clean Interactive Astraeus Serenade Web Tracker Code
 Astraeus Serenade Complete Requirements Tracker
 
 body {
@@ -64,6 +64,7 @@ display: flex;
 align-items: flex-start;
 padding: 8px 0;
 border-bottom: 1px solid #334155;
+transition: color 0.2s ease;
 }
 .item-list li:last-child {
 border-bottom: none;
@@ -73,10 +74,6 @@ margin-right: 12px;
 margin-top: 4px;
 transform: scale(1.2);
 cursor: pointer;
-}
-.checked-text {
-text-decoration: line-through;
-color: #64748b;
 }
 
 
@@ -165,16 +162,30 @@ Celestial Colossal Ethereal Dragon (Must be personally caught using the Celestia
 const checkboxes = document.querySelectorAll('.tracker-item');
 const progressPercent = document.getElementById('progress-percent');
 const progressFill = document.getElementById('progress-fill');
+// Load saved states from Local Storage
+function loadSavedStates() {
+checkboxes.forEach(box => {
+const id = box.getAttribute('data-id');
+const savedState = localStorage.getItem(id);
+if (savedState === 'true') {
+box.checked = true;
+}
+});
+}
+// Save states to Local Storage and update UI styling
 function updateProgress() {
 const total = checkboxes.length;
 let checkedCount = 0;
 checkboxes.forEach(box => {
-const textNode = box.nextSibling;
+const id = box.getAttribute('data-id');
+localStorage.setItem(id, box.checked);
 if (box.checked) {
 checkedCount++;
 box.parentElement.style.color = '#64748b';
+box.parentElement.style.textDecoration = 'line-through';
 } else {
 box.parentElement.style.color = '#e2e8f0';
+box.parentElement.style.textDecoration = 'none';
 }
 });
 const percentage = Math.round((checkedCount / total) * 100);
@@ -184,5 +195,8 @@ progressFill.style.width = percentage + '%';
 checkboxes.forEach(box => {
 box.addEventListener('change', updateProgress);
 });
+// Run on startup
+loadSavedStates();
 updateProgress();
+
 
